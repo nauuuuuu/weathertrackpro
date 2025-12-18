@@ -1,0 +1,13 @@
+parameters:
+    ignoreErrors:
+        # Ignore Guzzle HTTP Promise interface warnings
+        -
+            message: '#Call to an undefined method GuzzleHttp\\Promise\\PromiseInterface::(successful|json|status|body)\(\)#'
+            path: app/Http/Controllers/Api/WeatherApiController.php
+        
+        # Ignore middleware method warnings (Laravel magic)
+        -
+            message: '#Call to an undefined method .+::middleware\(\)#'
+            paths:
+                - app/Http/Controllers/FavoriteCityController.php
+                - app/Http/Controllers/SearchHistoryController.php

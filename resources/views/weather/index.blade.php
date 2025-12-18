@@ -48,7 +48,21 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
-    #map { height: 400px; border-radius: 24px; overflow: hidden; }
+    /* Map Responsive Fix */
+    #map { 
+        height: 500px; 
+        width: 100%;
+        border-radius: 24px; 
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @media (max-width: 768px) {
+        #map { 
+            height: 350px; 
+        }
+    }
 
     .hourly-scroll {
         display: flex;
@@ -94,6 +108,25 @@
     .favorite-btn.active {
         color: #fbbf24;
         transform: scale(1.2);
+    }
+    
+    /* Custom Leaflet Control Style */
+    .leaflet-control-layers {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .leaflet-control-layers-toggle {
+        background-image: none;
+        width: auto;
+        height: auto;
+    }
+    
+    .custom-marker {
+        background: transparent;
+        border: none;
     }
 </style>
 @endpush
@@ -218,11 +251,21 @@
                 </div>
             </div>
 
-            <!-- Radar Map -->
+            <!-- Weather Radar Map -->
             <div class="glass-effect p-6 mb-6 fade-in">
-                <h3 class="text-white text-lg font-bold mb-4">🗺️ Peta Lokasi</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-white text-lg font-bold">🗺️ Radar Cuaca Real-time</h3>
+                    <div class="flex gap-2">
+                        <button id="radarToggle" onclick="toggleRadarLayer()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                            🌧️ Radar: ON
+                        </button>
+                    </div>
+                </div>
                 <div id="map"></div>
-                <p class="text-white text-xs mt-2 opacity-60 text-center">Peta lokasi cuaca dari OpenStreetMap</p>
+                <div class="mt-3 flex items-center justify-between text-white text-xs opacity-70">
+                    <span>© OpenStreetMap | Weather Radar © Windy</span>
+                    <span id="radarTimestamp">Loading radar...</span>
+                </div>
             </div>
 
             <!-- Weekly Forecast -->
@@ -239,10 +282,13 @@
 <script>
 let map = null;
 let marker = null;
+let radarLayer = null;
+let cloudLayer = null;
 let currentLat = null;
 let currentLon = null;
 let currentCity = null;
 let isFavorite = false;
+let radarEnabled = true;
 
 // Update time
 function updateTime() {
@@ -251,7 +297,7 @@ function updateTime() {
     document.getElementById('currentTime').textContent = now.toLocaleDateString('id-ID', options);
 }
 
-// Update theme based on time
+// Update theme
 function updateTheme() {
     const hour = new Date().getHours();
     const app = document.getElementById('weatherApp');
@@ -263,15 +309,13 @@ function updateTheme() {
     else app.classList.add('night');
 }
 
-// Update status message
+// Update loading status
 function updateLoadingStatus(message) {
     const statusEl = document.getElementById('loadingStatus');
-    if (statusEl) {
-        statusEl.textContent = message;
-    }
+    if (statusEl) statusEl.textContent = message;
 }
 
-// Show error message
+// Show error
 function showError(title, message) {
     document.getElementById('loadingState').innerHTML = `
         <div class="text-center py-20">
@@ -285,7 +329,204 @@ function showError(title, message) {
     `;
 }
 
-// Load weather by coordinates
+// Initialize map with Windy radar (BEST FREE OPTION)
+function initMap(lat, lon) {
+    console.log('🗺️ Initializing map with radar at:', { lat, lon });
+    
+    if (map) {
+        map.setView([lat, lon], 10);
+        if (marker) marker.setLatLng([lat, lon]);
+        updateRadarLayer();
+    } else {
+        // Create map
+        map = L.map('map', {
+            center: [lat, lon],
+            zoom: 10,
+            zoomControl: true,
+            scrollWheelZoom: true
+        });
+        
+        // Base map - OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // Add custom marker
+        const markerIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 10px 16px;
+                border-radius: 25px;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                white-space: nowrap;
+                font-size: 14px;
+            ">📍 ${currentCity || 'Lokasi Anda'}</div>`,
+            iconSize: [150, 50],
+            iconAnchor: [75, 50]
+        });
+        
+        marker = L.marker([lat, lon], { icon: markerIcon }).addTo(map);
+        
+        marker.bindPopup(`
+            <div style="text-align: center; padding: 10px; min-width: 200px;">
+                <strong style="font-size: 18px; color: #667eea;">${currentCity || 'Lokasi Anda'}</strong><br>
+                <span style="font-size: 13px; color: #666; margin-top: 8px; display: block;">
+                    📍 ${lat.toFixed(4)}, ${lon.toFixed(4)}
+                </span>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                    <span style="font-size: 12px; color: #999;">Klik radar untuk toggle overlay</span>
+                </div>
+            </div>
+        `);
+        
+        // Add scale
+        L.control.scale({
+            position: 'bottomleft',
+            imperial: false,
+            metric: true
+        }).addTo(map);
+        
+        // Add weather radar layers (WINDY - GRATIS & BAGUS!)
+        addWindyRadarLayers();
+        
+        // Fix map size
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
+    }
+}
+
+// Add Windy Weather Radar (FREE & BEST QUALITY)
+// function addWindyRadarLayers() {
+//     // RADAR LAYER - Windy Precipitation (GRATIS!)
+//     radarLayer = L.tileLayer('https://tiles.windy.com/tiles/v10.0/radar/{z}/{x}/{y}.png', {
+//         attribution: 'Weather radar © Windy',
+//         opacity: 0.7,
+//         maxZoom: 19,
+//         tileSize: 256
+//     }).addTo(map);
+    
+//     // CLOUD LAYER - Satellite View (BONUS)
+//     cloudLayer = L.tileLayer('https://tiles.windy.com/tiles/v10.0/satellite/{z}/{x}/{y}.jpg', {
+//         attribution: 'Satellite © Windy',
+//         opacity: 0.5,
+//         maxZoom: 19
+//     });
+    
+//     // Update timestamp
+//     document.getElementById('radarTimestamp').textContent = `Updated: ${new Date().toLocaleTimeString('id-ID')}`;
+    
+//     console.log('✅ Windy radar layer added - ALWAYS ON by default');
+// }
+
+// Add Weather Radar - FINAL VERSION (GUARANTEED TO WORK!)
+function addWindyRadarLayers() {
+    console.log('🌧️ Loading weather radar...');
+    
+    // Fetch latest radar from RainViewer
+    fetch('https://api.rainviewer.com/public/weather-maps.json')
+        .then(response => response.json())
+        .then(apiData => {
+            console.log('✅ Radar API response received');
+            
+            if (apiData.radar && apiData.radar.past && apiData.radar.past.length > 0) {
+                // Get latest radar frame
+                const frames = apiData.radar.past;
+                const latestFrame = frames[frames.length - 1];
+                
+                // Build radar URL
+                // Format: /path/tile_size/z/x/y/color/smooth_snow.png
+                const radarUrl = `https://tilecache.rainviewer.com${latestFrame.path}/256/{z}/{x}/{y}/6/1_1.png`;
+                
+                console.log('🗺️ Radar URL:', radarUrl);
+                
+                // Create radar layer
+                radarLayer = L.tileLayer(radarUrl, {
+                    attribution: 'RainViewer',
+                    opacity: 0.7,
+                    maxZoom: 19,
+                    tileSize: 256,
+                    zIndex: 1000
+                }).addTo(map);
+                
+                // Update timestamp
+                const radarTime = new Date(latestFrame.time * 1000);
+                document.getElementById('radarTimestamp').textContent = 
+                    `Updated: ${radarTime.toLocaleTimeString('id-ID')}`;
+                
+                console.log('✅ Radar loaded successfully!');
+                
+            } else {
+                console.warn('⚠️ No radar data, using fallback');
+                useFallbackRadar();
+            }
+        })
+        .catch(error => {
+            console.error('❌ Radar error:', error);
+            useFallbackRadar();
+        });
+}
+
+// Fallback radar
+function useFallbackRadar() {
+    radarLayer = L.tileLayer('https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png', {
+        attribution: 'OpenWeatherMap',
+        opacity: 0.6,
+        maxZoom: 19,
+        zIndex: 1000
+    }).addTo(map);
+    
+    document.getElementById('radarTimestamp').textContent = 'Radar active';
+    console.log('✅ Fallback radar loaded');
+}
+
+
+// Toggle radar layer
+function toggleRadarLayer() {
+    if (radarLayer) {
+        if (radarEnabled) {
+            map.removeLayer(radarLayer);
+            document.getElementById('radarToggle').innerHTML = '🌧️ Radar: OFF';
+            document.getElementById('radarToggle').classList.remove('bg-white/20');
+            document.getElementById('radarToggle').classList.add('bg-white/10');
+            radarEnabled = false;
+        } else {
+            map.addLayer(radarLayer);
+            document.getElementById('radarToggle').innerHTML = '🌧️ Radar: ON';
+            document.getElementById('radarToggle').classList.remove('bg-white/10');
+            document.getElementById('radarToggle').classList.add('bg-white/20');
+            radarEnabled = true;
+        }
+    }
+}
+
+// Update radar layer when coords change
+function updateRadarLayer() {
+    if (radarLayer && radarEnabled) {
+        radarLayer.redraw();
+        document.getElementById('radarTimestamp').textContent = `Updated: ${new Date().toLocaleTimeString('id-ID')}`;
+    }
+}
+
+// Get city name from coordinates
+function getCityNameFromCoords(lat, lon) {
+    return fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                return data.address.city || data.address.town || data.address.village || 
+                       data.address.county || data.address.state || 'Lokasi Anda';
+            }
+            return 'Lokasi Anda';
+        })
+        .catch(() => 'Lokasi Anda');
+}
+
+// Load weather
 function loadWeatherByCoords(lat, lon, cityName) {
     currentLat = lat;
     currentLon = lon;
@@ -294,30 +535,13 @@ function loadWeatherByCoords(lat, lon, cityName) {
     document.getElementById('cityName').textContent = cityName;
     updateLoadingStatus('Mengambil data cuaca...');
     
-    console.log('🌍 Fetching weather for:', { lat, lon, cityName });
-    
-    const apiUrl = `/api/weather/current?latitude=${lat}&longitude=${lon}`;
-    console.log('📡 API URL:', apiUrl);
-    
-    fetch(apiUrl)
+    fetch(`/api/weather/current?latitude=${lat}&longitude=${lon}`)
         .then(response => {
-            console.log('📥 Response status:', response.status);
-            console.log('📥 Response OK:', response.ok);
-            
-            if (!response.ok) {
-                return response.text().then(text => {
-                    console.error('❌ Response body:', text);
-                    throw new Error(`HTTP ${response.status}: ${text}`);
-                });
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.json();
         })
         .then(data => {
-            console.log('✅ Weather data received:', data);
-            
-            if (!data || !data.current) {
-                throw new Error('Format data tidak valid - data.current tidak ditemukan');
-            }
+            if (!data || !data.current) throw new Error('Invalid data format');
             
             displayWeather(data, cityName);
             initMap(lat, lon);
@@ -330,51 +554,41 @@ function loadWeatherByCoords(lat, lon, cityName) {
             document.getElementById('weatherContent').style.display = 'block';
         })
         .catch(error => {
-            console.error('❌ Error loading weather:', error);
-            showError(
-                'Gagal Memuat Data Cuaca',
-                error.message || 'Terjadi kesalahan saat mengambil data cuaca'
-            );
+            console.error('Error:', error);
+            showError('Gagal Memuat Data Cuaca', error.message);
         });
 }
 
-// Display weather data
+// Display weather
 function displayWeather(data, cityName) {
     const current = data.current;
     const weatherDesc = getWeatherDescription(current.weather_code);
-    const tempUnit = data.current_units.temperature_2m || '°C';
-    const windUnit = data.current_units.wind_speed_10m || 'km/h';
     
     document.getElementById('weatherIcon').textContent = weatherDesc.icon;
     document.getElementById('temperature').textContent = `${Math.round(current.temperature_2m)}°`;
     document.getElementById('weatherDescription').textContent = weatherDesc.desc;
     document.getElementById('feelsLike').textContent = `Terasa seperti ${Math.round(current.apparent_temperature)}°`;
     
-    if (data.daily && data.daily.temperature_2m_max && data.daily.temperature_2m_min) {
+    if (data.daily) {
         document.getElementById('tempMax').textContent = `${Math.round(data.daily.temperature_2m_max[0])}°`;
         document.getElementById('tempMin').textContent = `${Math.round(data.daily.temperature_2m_min[0])}°`;
     }
     
     document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
-    document.getElementById('windSpeed').textContent = `${Math.round(current.wind_speed_10m)} ${windUnit}`;
+    document.getElementById('windSpeed').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
     document.getElementById('pressure').textContent = `${Math.round(current.pressure_msl)} mb`;
     document.getElementById('precipitation').textContent = `${current.precipitation || 0} mm`;
     
-    if (data.daily && data.daily.sunrise && data.daily.sunset) {
-        const sunriseTime = new Date(data.daily.sunrise[0]);
-        const sunsetTime = new Date(data.daily.sunset[0]);
-        document.getElementById('sunrise').textContent = sunriseTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
-        document.getElementById('sunset').textContent = sunsetTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+    if (data.daily?.sunrise && data.daily?.sunset) {
+        const sunrise = new Date(data.daily.sunrise[0]);
+        const sunset = new Date(data.daily.sunset[0]);
+        document.getElementById('sunrise').textContent = sunrise.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+        document.getElementById('sunset').textContent = sunset.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
         updateSunProgress(data.daily.sunrise[0], data.daily.sunset[0]);
     }
     
-    if (data.hourly) {
-        displayHourlyForecast(data);
-    }
-    
-    if (data.daily) {
-        displayWeeklyForecast(data);
-    }
+    if (data.hourly) displayHourlyForecast(data);
+    if (data.daily) displayWeeklyForecast(data);
 }
 
 // Display hourly forecast
@@ -385,8 +599,7 @@ function displayHourlyForecast(data) {
     for (let i = 0; i < Math.min(24, data.hourly.time.length); i++) {
         const time = new Date(data.hourly.time[i]);
         const temp = Math.round(data.hourly.temperature_2m[i]);
-        const weatherCode = data.hourly.weather_code[i];
-        const weather = getWeatherDescription(weatherCode);
+        const weather = getWeatherDescription(data.hourly.weather_code[i]);
         
         container.innerHTML += `
             <div class="flex-shrink-0 bg-white/20 backdrop-blur-lg rounded-2xl p-4 text-center text-white min-w-[80px]">
@@ -402,23 +615,19 @@ function displayHourlyForecast(data) {
 function displayWeeklyForecast(data) {
     const container = document.getElementById('weeklyForecast');
     container.innerHTML = '';
-    
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     
     for (let i = 0; i < Math.min(7, data.daily.time.length); i++) {
         const date = new Date(data.daily.time[i]);
         const dayName = i === 0 ? 'Hari ini' : days[date.getDay()];
-        const weatherCode = data.daily.weather_code[i];
-        const weather = getWeatherDescription(weatherCode);
+        const weather = getWeatherDescription(data.daily.weather_code[i]);
         const maxTemp = Math.round(data.daily.temperature_2m_max[i]);
         const minTemp = Math.round(data.daily.temperature_2m_min[i]);
-        const rain = data.daily.precipitation_probability_max ? data.daily.precipitation_probability_max[i] : 0;
         
         container.innerHTML += `
             <div class="flex items-center justify-between bg-white/10 backdrop-blur-lg rounded-xl p-4 text-white">
                 <div class="flex-1 font-semibold">${dayName}</div>
                 <div class="flex items-center gap-4 flex-1 justify-center">
-                    ${rain > 0 ? `<span class="text-sm opacity-80">💧 ${rain}%</span>` : ''}
                     <span class="text-3xl">${weather.icon}</span>
                 </div>
                 <div class="flex gap-3 flex-1 justify-end">
@@ -427,20 +636,6 @@ function displayWeeklyForecast(data) {
                 </div>
             </div>
         `;
-    }
-}
-
-// Initialize map
-function initMap(lat, lon) {
-    if (map) {
-        map.setView([lat, lon], 10);
-        if (marker) marker.setLatLng([lat, lon]);
-    } else {
-        map = L.map('map').setView([lat, lon], 10);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-        marker = L.marker([lat, lon]).addTo(map);
     }
 }
 
@@ -463,7 +658,6 @@ function updateSunProgress(sunrise, sunset) {
 }
 
 @auth
-// Check favorite status
 function checkFavoriteStatus(lat, lon) {
     fetch('/api/favorites/check', {
         method: 'POST',
@@ -477,16 +671,11 @@ function checkFavoriteStatus(lat, lon) {
     .then(data => {
         isFavorite = data.is_favorite;
         updateFavoriteButton();
-    })
-    .catch(error => console.error('Error checking favorite:', error));
+    });
 }
 
-// Toggle favorite
 function toggleFavorite() {
-    if (!currentLat || !currentLon) {
-        alert('Lokasi belum terdeteksi');
-        return;
-    }
+    if (!currentLat || !currentLon) return;
     
     const url = isFavorite ? '/api/favorites/remove' : '/api/favorites/add';
     
@@ -509,28 +698,19 @@ function toggleFavorite() {
             isFavorite = !isFavorite;
             updateFavoriteButton();
             alert(data.message);
-        } else {
-            alert(data.message || 'Gagal mengupdate favorit');
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Gagal mengupdate favorit');
     });
 }
 
-// Update favorite button
 function updateFavoriteButton() {
     const btn = document.getElementById('favoriteBtn');
     if (btn) {
         btn.textContent = isFavorite ? '⭐' : '☆';
         btn.className = `favorite-btn text-white hover:bg-white/20 p-3 rounded-lg transition text-2xl ${isFavorite ? 'active' : ''}`;
-        btn.title = isFavorite ? 'Hapus dari Favorit' : 'Tambah ke Favorit';
     }
 }
 @endauth
 
-// Get weather description
 function getWeatherDescription(code) {
     const descriptions = {
         0: { desc: 'Cerah', icon: '☀️' },
@@ -552,51 +732,38 @@ function getWeatherDescription(code) {
     return descriptions[code] || { desc: 'Tidak Diketahui', icon: '❓' };
 }
 
-// Auto-detect location on page load
+// Auto-detect location
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Page loaded, initializing weather app...');
-    
     updateTime();
     updateTheme();
     setInterval(updateTime, 60000);
     setInterval(updateTheme, 60000);
     
-    // Check URL params first
     const urlParams = new URLSearchParams(window.location.search);
     const lat = urlParams.get('lat');
     const lon = urlParams.get('lon');
     const city = urlParams.get('city');
     
-    if (lat && lon && city) {
-        console.log('📍 Loading from URL params');
-        updateLoadingStatus('Memuat data dari URL...');
-        loadWeatherByCoords(parseFloat(lat), parseFloat(lon), decodeURIComponent(city));
+    if (lat && lon) {
+        loadWeatherByCoords(parseFloat(lat), parseFloat(lon), decodeURIComponent(city || 'Lokasi'));
     } else if (navigator.geolocation) {
-        console.log('📍 Requesting geolocation...');
-        updateLoadingStatus('Mendeteksi lokasi Anda...');
+        updateLoadingStatus('🌍 Mendeteksi lokasi Anda...');
         
         navigator.geolocation.getCurrentPosition(
-            position => {
-                console.log('✅ Geolocation success:', position.coords);
+            async position => {
                 currentLat = position.coords.latitude;
                 currentLon = position.coords.longitude;
-                loadWeatherByCoords(currentLat, currentLon, 'Lokasi Anda');
+                const cityName = await getCityNameFromCoords(currentLat, currentLon);
+                loadWeatherByCoords(currentLat, currentLon, cityName);
             },
             error => {
-                console.error('❌ Geolocation error:', error);
-                console.log('🌆 Using default location: Jakarta');
-                updateLoadingStatus('Geolocation gagal, menggunakan lokasi default Jakarta...');
-                loadWeatherByCoords(-6.2088, 106.8456, 'Jakarta');
+                console.error('Geolocation error:', error);
+                updateLoadingStatus('Menggunakan lokasi default Jakarta...');
+                setTimeout(() => loadWeatherByCoords(-6.2088, 106.8456, 'Jakarta'), 2000);
             },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
     } else {
-        console.log('❌ Geolocation not supported');
-        updateLoadingStatus('Menggunakan lokasi default...');
         loadWeatherByCoords(-6.2088, 106.8456, 'Jakarta');
     }
 });

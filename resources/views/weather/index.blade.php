@@ -193,7 +193,7 @@
 
             <!-- Hourly Forecast -->
             <div class="glass-effect p-6 mb-6 fade-in">
-                <h3 class="text-white text-lg font-bold mb-4">📊 Prakiraan Per Jam</h3>
+                <h3 class="text-white text-lg font-bold mb-4">Prakiraan Per Jam</h3>
                 <div id="hourlyForecast" class="hourly-scroll"></div>
             </div>
 
@@ -231,7 +231,7 @@
 
             <!-- Sunrise & Sunset -->
             <div class="glass-effect p-6 mb-6 fade-in">
-                <h3 class="text-white text-lg font-bold mb-4">☀️ Matahari</h3>
+                <h3 class="text-white text-lg font-bold mb-4">Matahari</h3>
                 <div class="flex justify-between items-center text-white">
                     <div class="text-center">
                         <div class="text-3xl mb-2">🌅</div>
@@ -254,10 +254,10 @@
             <!-- Weather Radar Map -->
             <div class="glass-effect p-6 mb-6 fade-in">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-white text-lg font-bold">🗺️ Radar Cuaca Real-time</h3>
+                    <h3 class="text-white text-lg font-bold">Radar Cuaca Real-time</h3>
                     <div class="flex gap-2">
                         <button id="radarToggle" onclick="toggleRadarLayer()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
-                            🌧️ Radar: ON
+                            Radar: ON
                         </button>
                     </div>
                 </div>
@@ -270,7 +270,7 @@
 
             <!-- Weekly Forecast -->
             <div class="glass-effect p-6 mb-20 fade-in">
-                <h3 class="text-white text-lg font-bold mb-4">📅 Prakiraan 7 Hari</h3>
+                <h3 class="text-white text-lg font-bold mb-4">Prakiraan 7 Hari</h3>
                 <div id="weeklyForecast" class="space-y-3"></div>
             </div>
 
@@ -323,7 +323,7 @@ function showError(title, message) {
             <p class="text-white text-xl font-bold mb-2">${title}</p>
             <p class="text-white opacity-80 mb-4">${message}</p>
             <button onclick="location.reload()" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition">
-                🔄 Coba Lagi
+                Coba Lagi
             </button>
         </div>
     `;
@@ -331,7 +331,7 @@ function showError(title, message) {
 
 // Initialize map with Windy radar (BEST FREE OPTION)
 function initMap(lat, lon) {
-    console.log('🗺️ Initializing map with radar at:', { lat, lon });
+    console.log('Initializing map with radar at:', { lat, lon });
     
     if (map) {
         map.setView([lat, lon], 10);
@@ -425,13 +425,13 @@ function initMap(lat, lon) {
 
 // Add Weather Radar - FINAL VERSION (GUARANTEED TO WORK!)
 function addWindyRadarLayers() {
-    console.log('🌧️ Loading weather radar...');
+    console.log('Loading weather radar...');
     
     // Fetch latest radar from RainViewer
     fetch('https://api.rainviewer.com/public/weather-maps.json')
         .then(response => response.json())
         .then(apiData => {
-            console.log('✅ Radar API response received');
+            console.log('Radar API response received');
             
             if (apiData.radar && apiData.radar.past && apiData.radar.past.length > 0) {
                 // Get latest radar frame
@@ -442,7 +442,7 @@ function addWindyRadarLayers() {
                 // Format: /path/tile_size/z/x/y/color/smooth_snow.png
                 const radarUrl = `https://tilecache.rainviewer.com${latestFrame.path}/256/{z}/{x}/{y}/6/1_1.png`;
                 
-                console.log('🗺️ Radar URL:', radarUrl);
+                console.log('Radar URL:', radarUrl);
                 
                 // Create radar layer
                 radarLayer = L.tileLayer(radarUrl, {
@@ -458,15 +458,15 @@ function addWindyRadarLayers() {
                 document.getElementById('radarTimestamp').textContent = 
                     `Updated: ${radarTime.toLocaleTimeString('id-ID')}`;
                 
-                console.log('✅ Radar loaded successfully!');
+                console.log('Radar loaded successfully!');
                 
             } else {
-                console.warn('⚠️ No radar data, using fallback');
+                console.warn('No radar data, using fallback');
                 useFallbackRadar();
             }
         })
         .catch(error => {
-            console.error('❌ Radar error:', error);
+            console.error('Radar error:', error);
             useFallbackRadar();
         });
 }
@@ -481,7 +481,7 @@ function useFallbackRadar() {
     }).addTo(map);
     
     document.getElementById('radarTimestamp').textContent = 'Radar active';
-    console.log('✅ Fallback radar loaded');
+    console.log('Fallback radar loaded');
 }
 
 
@@ -490,13 +490,13 @@ function toggleRadarLayer() {
     if (radarLayer) {
         if (radarEnabled) {
             map.removeLayer(radarLayer);
-            document.getElementById('radarToggle').innerHTML = '🌧️ Radar: OFF';
+            document.getElementById('radarToggle').innerHTML = 'Radar: OFF';
             document.getElementById('radarToggle').classList.remove('bg-white/20');
             document.getElementById('radarToggle').classList.add('bg-white/10');
             radarEnabled = false;
         } else {
             map.addLayer(radarLayer);
-            document.getElementById('radarToggle').innerHTML = '🌧️ Radar: ON';
+            document.getElementById('radarToggle').innerHTML = 'Radar: ON';
             document.getElementById('radarToggle').classList.remove('bg-white/10');
             document.getElementById('radarToggle').classList.add('bg-white/20');
             radarEnabled = true;
@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (lat && lon) {
         loadWeatherByCoords(parseFloat(lat), parseFloat(lon), decodeURIComponent(city || 'Lokasi'));
     } else if (navigator.geolocation) {
-        updateLoadingStatus('🌍 Mendeteksi lokasi Anda...');
+        updateLoadingStatus('Mendeteksi lokasi Anda...');
         
         navigator.geolocation.getCurrentPosition(
             async position => {

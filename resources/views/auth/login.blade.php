@@ -88,7 +88,7 @@
                     <!-- Submit Button -->
                     <button type="submit" 
                         class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        🔐 Masuk
+                        Masuk
                     </button>
                 </form>
 
@@ -120,22 +120,6 @@
                 </div>
             </div>
 
-            <!-- Demo Accounts -->
-            <div class="mt-6 glass-card p-4">
-                <p class="text-sm font-semibold text-gray-700 mb-2">🔑 Akun Demo:</p>
-                <div class="grid grid-cols-2 gap-3 text-xs">
-                    <div class="bg-blue-50 p-2 rounded">
-                        <p class="font-semibold text-blue-800">Admin</p>
-                        <p class="text-blue-600">admin@weathertrackpro.com</p>
-                        <p class="text-blue-600">password123</p>
-                    </div>
-                    <div class="bg-green-50 p-2 rounded">
-                        <p class="font-semibold text-green-800">User</p>
-                        <p class="text-green-600">user@weathertrackpro.com</p>
-                        <p class="text-green-600">password123</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </body>

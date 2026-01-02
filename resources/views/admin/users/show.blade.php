@@ -59,7 +59,7 @@
             </div>
             
             <div class="weather-card p-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">🕐 Riwayat Pencarian (20 Terakhir)</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Riwayat Pencarian (20 Terakhir)</h2>
                 <div class="space-y-2 max-h-96 overflow-y-auto">
                     @forelse($user->searchHistories as $search)
                         <div class="p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg hover:shadow-md transition">

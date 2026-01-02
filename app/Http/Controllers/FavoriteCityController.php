@@ -76,7 +76,7 @@ class FavoriteCityController extends Controller implements HasMiddleware
 
         return response()->json([
             'success' => true,
-            'message' => '⭐ Kota berhasil ditambahkan ke favorit!',
+            'message' => 'Kota berhasil ditambahkan ke favorit!',
             'data' => $favorite
         ]);
     }
@@ -102,7 +102,7 @@ class FavoriteCityController extends Controller implements HasMiddleware
         if ($deleted) {
             return response()->json([
                 'success' => true,
-                'message' => '🗑️ Kota berhasil dihapus dari favorit'
+                'message' => 'Kota berhasil dihapus dari favorit'
             ]);
         }
 
@@ -177,6 +177,6 @@ class FavoriteCityController extends Controller implements HasMiddleware
         $favorite->delete();
 
         return redirect()->route('favorites.index')
-            ->with('success', '🗑️ Kota berhasil dihapus dari favorit');
+            ->with('success', 'Kota berhasil dihapus dari favorit');
     }
 }

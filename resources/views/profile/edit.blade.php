@@ -24,7 +24,7 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-2xl p-8 mb-6">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">👤 Edit Profil</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Edit Profil</h2>
             
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
@@ -55,14 +55,14 @@
                 </div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition">
-                    💾 Simpan Perubahan
+                    Simpan Perubahan
                 </button>
             </form>
         </div>
 
         <!-- Preferences -->
         <div class="bg-white rounded-2xl shadow-2xl p-8 mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">⚙️ Preferensi Cuaca</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Preferensi Cuaca</h2>
             
             <form method="POST" action="{{ route('profile.preferences.update') }}">
                 @csrf
@@ -96,14 +96,14 @@
                 </div>
 
                 <button type="submit" class="w-full mt-6 bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-teal-700 transition">
-                    ⚙️ Update Preferensi
+                    Update Preferensi
                 </button>
             </form>
         </div>
 
         <!-- Change Password -->
         <div class="bg-white rounded-2xl shadow-2xl p-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">🔐 Ubah Password</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Ubah Password</h2>
             
             <form method="POST" action="{{ route('profile.password.update') }}">
                 @csrf
@@ -134,7 +134,7 @@
                 </div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:from-red-700 hover:to-pink-700 transition">
-                    🔒 Ubah Password
+                    Ubah Password
                 </button>
             </form>
         </div>

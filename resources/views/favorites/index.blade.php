@@ -50,7 +50,7 @@
                 <h2 class="text-2xl font-bold text-white mb-2">Belum Ada Kota Favorit</h2>
                 <p class="text-white opacity-80 mb-6">Mulai tambahkan kota favorit dari halaman cuaca</p>
                 <a href="{{ route('home') }}" class="inline-block bg-white text-purple-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition">
-                    🔍 Cari Kota
+                    Cari Kota
                 </a>
             </div>
         @else
@@ -84,7 +84,7 @@
                         
                         <a href="/?lat={{ $favorite->latitude }}&lon={{ $favorite->longitude }}&city={{ urlencode($favorite->city_name) }}" 
                             class="block w-full bg-white/20 hover:bg-white/30 text-center py-3 rounded-lg font-semibold transition">
-                            🌤️ Lihat Cuaca
+                            Lihat Cuaca
                         </a>
                     </div>
                 @endforeach

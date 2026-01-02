@@ -40,8 +40,8 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $this->command->info('✅ Users seeded successfully!');
-        $this->command->info('📧 Admin: admin@weathertrack.com / admin123');
-        $this->command->info('📧 User: test@example.com / password');
+        $this->command->info('Users seeded successfully!');
+        $this->command->info('Admin: admin@weathertrack.com / admin123');
+        $this->command->info('User: test@example.com / password');
     }
 }

@@ -41,7 +41,7 @@
 
 <!-- Hourly Forecast -->
 <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl mb-6">
-    <h3 class="text-xl font-bold mb-4">📊 Prakiraan Per Jam (24 Jam)</h3>
+    <h3 class="text-xl font-bold mb-4">Prakiraan Per Jam (24 Jam)</h3>
     <div class="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 overflow-x-auto">
         @foreach(array_slice($weather['hourly']['time'], 0, 24) as $index => $time)
             @php
@@ -61,7 +61,7 @@
 
 <!-- Daily Forecast -->
 <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl">
-    <h3 class="text-xl font-bold mb-4">📅 Prakiraan 7 Hari</h3>
+    <h3 class="text-xl font-bold mb-4">Prakiraan 7 Hari</h3>
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         @foreach($weather['daily']['time'] as $index => $date)
             @php

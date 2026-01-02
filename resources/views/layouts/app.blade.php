@@ -20,7 +20,7 @@
             top: 0;
             width: 320px;
             height: 100vh;
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            /* background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); */
             backdrop-filter: blur(20px);
             box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
             transition: left 0.3s ease;
@@ -131,7 +131,7 @@
                     <input type="text" 
                         id="citySearchInput" 
                         class="search-input" 
-                        placeholder="🔍 Cari kota..."
+                        placeholder="Cari kota..."
                         autocomplete="off">
                     <div id="searchResults" class="mt-2 max-h-64 overflow-y-auto"></div>
                 </div>
@@ -196,17 +196,17 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition font-semibold">
-                            🚪 Logout
+                            Logout
                         </button>
                     </form>
                 </div>
                 @else
                 <div class="space-y-2">
                     <a href="{{ route('login') }}" class="block w-full bg-white text-purple-600 py-3 px-4 rounded-lg text-center font-bold hover:bg-gray-100 transition">
-                        🔐 Login
+                        Login
                     </a>
                     <a href="{{ route('register') }}" class="block w-full bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-lg text-center font-bold transition">
-                        ✨ Daftar Gratis
+                        Daftar Gratis
                     </a>
                 </div>
                 @endauth

@@ -50,7 +50,7 @@ class SearchHistoryController extends Controller implements HasMiddleware
         $history->delete();
 
         return redirect()->route('history.index')
-            ->with('success', '🗑️ Riwayat berhasil dihapus');
+            ->with('success', 'Riwayat berhasil dihapus');
     }
 
     /**
@@ -63,6 +63,6 @@ class SearchHistoryController extends Controller implements HasMiddleware
         auth()->user()->searchHistories()->delete();
 
         return redirect()->route('history.index')
-            ->with('success', '🗑️ Semua riwayat berhasil dihapus');
+            ->with('success', 'Semua riwayat berhasil dihapus');
     }
 }

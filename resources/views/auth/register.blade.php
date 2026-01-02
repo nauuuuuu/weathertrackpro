@@ -86,7 +86,7 @@
                     <!-- Submit Button -->
                     <button type="submit" 
                         class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        🚀 Daftar Sekarang
+                        Daftar Sekarang
                     </button>
                 </form>
 
@@ -116,17 +116,6 @@
                         Lanjutkan sebagai tamu (tanpa login)
                     </a>
                 </div>
-            </div>
-
-            <!-- Features -->
-            <div class="mt-6 glass-card p-4">
-                <p class="text-sm font-semibold text-gray-700 mb-2">✨ Fitur Member:</p>
-                <ul class="text-xs text-gray-600 space-y-1">
-                    <li>✅ Simpan kota favorit</li>
-                    <li>✅ Riwayat pencarian</li>
-                    <li>✅ Preferensi pribadi</li>
-                    <li>✅ Dan banyak lagi!</li>
-                </ul>
             </div>
         </div>
     </div>

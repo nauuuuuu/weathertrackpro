@@ -6,51 +6,73 @@
 <div class="py-12 px-4">
     <div class="max-w-7xl mx-auto">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white mb-2">🔐 Admin Dashboard</h1>
-            <p class="text-white text-opacity-90">Kelola sistem WeatherTrackPro</p>
+            <h1 class="text-3xl font-bold text-black mb-2">Admin Dashboard</h1>
+            <p class="text-black text-opacity-90">Kelola sistem WeatherTrackPro</p>
         </div>
         
-        <!-- Statistics Cards -->
+       <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="weather-card p-6 hover:shadow-xl transition">
+
+            <!-- Total Users -->
+            <div class="p-6 rounded-xl 
+                        bg-gradient-to-r from-blue-50 to-blue-100
+                        hover:shadow-xl transform hover:-translate-y-1 transition duration-300">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium">Total Users</p>
-                        <p class="text-4xl font-bold text-blue-600 mt-2">{{ $totalUsers }}</p>
+                        <p class="text-4xl font-bold text-blue-600 mt-2">
+                            {{ $totalUsers }}
+                        </p>
                     </div>
                     <div class="text-5xl">👥</div>
                 </div>
             </div>
-            
-            <div class="weather-card p-6 hover:shadow-xl transition">
+
+            <!-- Users Aktif -->
+            <div class="p-6 rounded-xl 
+                        bg-gradient-to-r from-green-50 to-green-100
+                        hover:shadow-xl transform hover:-translate-y-1 transition duration-300">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium">Users Aktif</p>
-                        <p class="text-4xl font-bold text-green-600 mt-2">{{ $activeUsers }}</p>
+                        <p class="text-4xl font-bold text-green-600 mt-2">
+                            {{ $activeUsers }}
+                        </p>
                     </div>
                     <div class="text-5xl">✅</div>
                 </div>
             </div>
-            
-            <div class="weather-card p-6 hover:shadow-xl transition">
+
+            <!-- Total Pencarian -->
+            <div class="p-6 rounded-xl 
+                        bg-gradient-to-r from-purple-50 to-purple-100
+                        hover:shadow-xl transform hover:-translate-y-1 transition duration-300">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium">Total Pencarian</p>
-                        <p class="text-4xl font-bold text-purple-600 mt-2">{{ $totalSearches }}</p>
+                        <p class="text-4xl font-bold text-purple-600 mt-2">
+                            {{ $totalSearches }}
+                        </p>
                     </div>
                     <div class="text-5xl">🔍</div>
                 </div>
             </div>
-            
-            <div class="weather-card p-6 hover:shadow-xl transition">
+
+            <!-- Kota Favorit -->
+            <div class="p-6 rounded-xl 
+                        bg-gradient-to-r from-orange-50 to-orange-100
+                        hover:shadow-xl transform hover:-translate-y-1 transition duration-300">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium">Kota Favorit</p>
-                        <p class="text-4xl font-bold text-orange-600 mt-2">{{ $totalFavorites }}</p>
+                        <p class="text-4xl font-bold text-orange-600 mt-2">
+                            {{ $totalFavorites }}
+                        </p>
                     </div>
                     <div class="text-5xl">⭐</div>
                 </div>
             </div>
+
         </div>
         
         <!-- Charts Section -->
@@ -58,7 +80,7 @@
             <!-- Top Cities -->
             <div class="weather-card p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">📊 Kota Paling Sering Dipantau</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Kota Paling Sering Dipantau</h2>
                     <a href="{{ route('admin.users.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
                         Lihat Semua →
                     </a>
@@ -88,7 +110,7 @@
             <!-- Recent Users -->
             <div class="weather-card p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">🆕 User Terbaru</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">User Terbaru</h2>
                     <a href="{{ route('admin.users.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
                         Lihat Semua →
                     </a>
@@ -122,7 +144,7 @@
 
         <!-- Quick Actions -->
         <div class="weather-card p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">⚡ Quick Actions</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a href="{{ route('admin.users.index') }}" class="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-xl transition transform hover:-translate-y-1">
                     <div class="text-4xl">👥</div>

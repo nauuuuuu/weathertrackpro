@@ -12,8 +12,8 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin WeatherTrackPro',
-            'email' => 'admin@weathertrackpro.com',
-            'password' => Hash::make('password123'),
+            'email' => 'admin@weathertrack.com',
+            'password' => Hash::make('admin123'),
             'role' => 'admin',
             'is_active' => true,
         ]);

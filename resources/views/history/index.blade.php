@@ -29,7 +29,7 @@
     <div class="max-w-4xl mx-auto">
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-4xl font-bold text-white mb-2">🕐 Riwayat Pencarian</h1>
+                <h1 class="text-4xl font-bold text-white mb-2">Riwayat Pencarian</h1>
                 <p class="text-white opacity-80">Kota-kota yang pernah Anda cari</p>
             </div>
             <a href="{{ route('home') }}" class="bg-white/20 backdrop-blur-lg text-white px-6 py-3 rounded-xl hover:bg-white/30 transition font-semibold">
@@ -50,7 +50,7 @@
                     @method('DELETE')
                     <button type="submit" onclick="return confirm('Hapus semua riwayat?')" 
                         class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-semibold transition">
-                        🗑️ Hapus Semua
+                        Hapus Semua
                     </button>
                 </form>
             </div>
@@ -62,7 +62,7 @@
                 <h2 class="text-2xl font-bold text-white mb-2">Belum Ada Riwayat</h2>
                 <p class="text-white opacity-80 mb-6">Mulai cari kota untuk melihat cuaca</p>
                 <a href="{{ route('home') }}" class="inline-block bg-white text-purple-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition">
-                    🔍 Cari Kota
+                    Cari Kota
                 </a>
             </div>
         @else
@@ -85,14 +85,14 @@
                         <div class="flex items-center gap-2">
                             <a href="/?lat={{ $history->latitude }}&lon={{ $history->longitude }}&city={{ urlencode($history->city_name) }}" 
                                 class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition">
-                                👁️ Lihat
+                                Lihat
                             </a>
                             <form method="POST" action="{{ route('history.destroy', $history) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" onclick="return confirm('Hapus riwayat ini?')" 
                                     class="bg-red-500/20 hover:bg-red-500/30 text-white px-4 py-2 rounded-lg transition">
-                                    🗑️
+                                    
                                 </button>
                             </form>
                         </div>

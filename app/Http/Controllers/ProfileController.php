@@ -48,7 +48,7 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return redirect()->route('profile.edit')
-            ->with('success', '✅ Profil berhasil diperbarui!');
+            ->with('success', 'Profil berhasil diperbarui!');
     }
 
     /**
@@ -72,7 +72,7 @@ class ProfileController extends Controller
         }
 
         return redirect()->route('profile.edit')
-            ->with('success', '⚙️ Preferensi berhasil diperbarui!');
+            ->with('success', 'Preferensi berhasil diperbarui!');
     }
 
     /**
@@ -90,7 +90,7 @@ class ProfileController extends Controller
         ]);
 
         return redirect()->route('profile.edit')
-            ->with('success', '🔒 Password berhasil diubah!');
+            ->with('success', 'Password berhasil diubah!');
     }
 
     /**

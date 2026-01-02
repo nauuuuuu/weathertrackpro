@@ -6,7 +6,7 @@
 <div class="py-12 px-4">
     <div class="max-w-3xl mx-auto">
         <div class="weather-card p-8">
-            <h1 class="text-3xl font-bold mb-6">⚙️ Preferensi Pengguna</h1>
+            <h1 class="text-3xl font-bold mb-6">Preferensi Pengguna</h1>
             
             @if(session('success'))
                 <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
@@ -45,7 +45,7 @@
                 
                 <div class="flex gap-3">
                     <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-                        💾 Simpan Preferensi
+                        Simpan Preferensi
                     </button>
                     <a href="{{ route('home') }}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition">
                         Batal
